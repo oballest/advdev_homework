@@ -30,5 +30,21 @@ echo "Setting up Nexus in project $GUID-nexus"
 
 # To be Implemented by Student
 echo "Creating Nexus deployment for GUID=${GUID} and USER=${USER}"
+oc project ${GUID}-nexus
 oc new-app --file=./Infrastructure/templates/nexus-template.yml
+
+
+while : ; do
+   echo "Checking if Nexus is Ready..."
+   oc get pod -n ${GUID}-nexus|grep '\-1\-'|grep -v deploy|grep "1/1"
+   [[ "$?" == "1" ]] || break
+   echo "...no. Sleeping 10 seconds."
+   sleep 10
+done
+
+echo "Nexus ready, configuring repos"
+sleep 30
+
+sh "./Infrastructure/bin/setup_nexus3.sh" admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}')
+
 echo "Nexus Deplyment created for GUID=${GUID} and USER=${USER}"

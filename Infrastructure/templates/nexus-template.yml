@@ -123,6 +123,23 @@ objects:
       deploymentconfig: nexus3
     sessionAffinity: None
     type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: nexus3
+    name: nexus3-registry
+  spec:
+    ports:
+    - name: 5000-tcp
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    selector:
+      app: nexus3
+      deploymentconfig: nexus3
+    sessionAffinity: None
+    type: ClusterIP
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
@@ -138,6 +155,26 @@ objects:
     to:
       kind: Service
       name: nexus3
+      weight: 100
+    wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: nexus3
+    name: nexus3-registry
+  spec:
+    host:
+    port:
+      targetPort: 5000
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: nexus3-registry
       weight: 100
     wildcardPolicy: None
 - apiVersion: v1
