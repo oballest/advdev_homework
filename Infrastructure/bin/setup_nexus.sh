@@ -30,5 +30,5 @@ echo "Setting up Nexus in project $GUID-nexus"
 
 # To be Implemented by Student
 echo "Creating Nexus deployment for GUID=${GUID} and USER=${USER}"
-oc new-app --file=../templates/nexus-template.yml
+oc new-app --file=./Infrastructure/templates/nexus-template.yml
 echo "Nexus Deplyment created for GUID=${GUID} and USER=${USER}"
