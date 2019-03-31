@@ -27,3 +27,8 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 # * CLUSTER: the base url of the cluster used (e.g. na39.openshift.opentlc.com)
 
 # To be Implemented by Student
+oc project 5359-jenkins
+
+echo "Setting up Jenkins resources y building the agent"
+oc new-app --file=Infrastructure/templates/jenkins-template.yml --param GUID=${GUID} --param CLUSTER=${CLUSTER} --param REPO=${REPO}
+echo "Done setting up Jenkins pod y building the agent"
