@@ -43,7 +43,7 @@ while : ; do
 done
 
 echo "Nexus ready, configuring repos $(oc project)"
-echo "Nexus Access URL http://$(oc get route nexus3 --template='{{ .spec.host }}')" 
-sh ./Infrastructure/bin/setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}')
+echo "Nexus Access URL http://$(oc get route nexus3 --template='{{ .spec.host }}' -n ${GUID}-nexus)" 
+sh ./Infrastructure/bin/setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n ${GUID}-nexus)
 
 echo "Nexus Deplyment created for GUID=${GUID} and USER=${USER}"
