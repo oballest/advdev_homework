@@ -49,19 +49,19 @@ objects:
   kind: ImageStream
   metadata:
     labels:
-      application: jenkins-agent-appdev
-    name: jenkins-agent-appdev
+      application: jenkins-slave-appdev
+    name: jenkins-slave-appdev
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
     labels:
-      application: jenkins-agent-appdev
-    name: jenkins-agent-appdev
+      application: jenkins-slave-appdev
+    name: jenkins-slave-appdev
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: jenkins-agent-appdev:latest
+        name: jenkins-slave-appdev:latest
     source:
       dockerfile: |-
         FROM docker.io/openshift/jenkins-agent-maven-35-centos7:v3.11
