@@ -59,7 +59,7 @@ podTemplate(
 	
 	 stage("Unit Tests"){
             echo "Running Unit Tests"
-	    sh "mvn -s ../nexus_settings.xml test
+	    sh "mvn -s ../nexus_settings.xml test"
 	    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
          }
 
