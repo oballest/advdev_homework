@@ -1,4 +1,8 @@
 // Jenkinsfile for MLBParks
+// Set the tag for the development image: version + build number
+def devTag      = "0.0-0"
+// Set the tag for the production image: version
+def prodTag     = "0.0"
 podTemplate(
   label: "skopeo-pod",
   cloud: "openshift",
@@ -20,7 +24,32 @@ podTemplate(
     // You need to build the application in directory `MLBParks`.
     // Also copy "../nexus_settings.xml" to your build directory
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
- 
+    // Checkout Source Code
+    stage('Checkout Source') {
+     steps {
+	     checkout scm
+
+	script {
+          def pom = readMavenPom file: 'pom.xml'
+          def version = getVersionFromPom(pom)
+
+          // TBD: Set the tag for the development image: version + build number.
+          // Example: def devTag  = "0.0-0"
+          devTag  = "${version}-" + currentBuild.number
+          // TBD: Set the tag for the production image: version
+          // Example: def prodTag = "0.0"
+          prodTag = "${version}"
+        }	
+     }
+    }
+   //end of the checout stage
+   stage('Build App') {
+      steps {
+         echo "Building version ${devTag}"
+	 sh "mvn -s ./nexus_settings.xml clean package -DskipTests=true"
+	 echo "Building complete version ${devTag}"
+      }
+   }
   }
 }
 
