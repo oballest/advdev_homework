@@ -65,7 +65,7 @@ podTemplate(
       'Code Coverage Tests': {
       stage('Code Coverage Tests'){
 	echo "Running Code Analysis"
-	sh "mvn -s ../nexus_settings.xml test sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"	
+	sh "mvn -s ../nexus_settings.xml test sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"	
       }}
     )
    }        
