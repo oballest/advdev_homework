@@ -55,14 +55,16 @@ podTemplate(
   //End of the build step
   stage('Test App') {
     parallel(
-      stage('Unit Tests') {
+      'a': {
+      stage('Unit Tests') {         
 	echo "Running Unit Tests"
 	sh "mvn -s ../nexus_settings.xml test"
        	step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true])
-      }
+      }},
+      'b': {
       stage('Code Coverage Tests'){
 	echo "Running Code Analysis"	
-      }
+      }}
     )        
   }
   //End of the test stage
