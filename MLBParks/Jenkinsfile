@@ -56,9 +56,16 @@ podTemplate(
   stage('Test App') {
      dir("MLBParks"){
        echo "Running Unit Tests"
-       sh "mvn -s ../nexus_settings.xml test"
-       step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true])
-      
+       parallel {
+         stage('Unit Tests') {
+	   echo "Running Unit Tests"
+	   sh "mvn -s ../nexus_settings.xml test"
+       	   step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true])
+	 }
+	 stage("Code Coverage Tests"){
+	   echo "Running Code Analysis"	
+	 }
+       }      
        echo "End of the test stage"
      }
    }
