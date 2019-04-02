@@ -54,7 +54,7 @@ podTemplate(
    }
   //End of the build step
   stage('Test App') {
-    
+    parallel(
       stage('Unit Tests') {
 	echo "Running Unit Tests"
 	sh "mvn -s ../nexus_settings.xml test"
@@ -63,7 +63,7 @@ podTemplate(
       stage('Code Coverage Tests'){
 	echo "Running Code Analysis"	
       }
-            
+    )        
   }
   //End of the test stage
  }
