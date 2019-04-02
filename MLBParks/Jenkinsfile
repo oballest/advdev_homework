@@ -31,7 +31,7 @@ podTemplate(
 	
           def pom = readMavenPom file: 'pom.xml'
           def version = getVersionFromPom(pom)
-	  sh ls
+	  echo "Directory $PWD"
           // TBD: Set the tag for the development image: version + build number.
           // Example: def devTag  = "0.0-0"
           devTag  = "${version}-" + currentBuild.number
