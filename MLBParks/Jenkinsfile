@@ -26,10 +26,9 @@ podTemplate(
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
     // Checkout Source Code
     stage('Checkout Source') {
-     steps {
-	     checkout scm
-
-	script {
+     
+	  checkout scm
+	
           def pom = readMavenPom file: 'pom.xml'
           def version = getVersionFromPom(pom)
 
@@ -39,8 +38,8 @@ podTemplate(
           // TBD: Set the tag for the production image: version
           // Example: def prodTag = "0.0"
           prodTag = "${version}"
-        }	
-     }
+        	
+     
     }
    //end of the checout stage
    stage('Build App') {

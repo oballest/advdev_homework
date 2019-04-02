@@ -24,6 +24,16 @@ objects:
     labels:
       app: jenkins-persistent
     name: jenkins
+- apiVersion: authorization.openshift.io/v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    name: jenkins_edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
