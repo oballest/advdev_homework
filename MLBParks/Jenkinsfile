@@ -46,11 +46,11 @@ podTemplate(
     }
    //end of the checout stage
    stage('Build App') {
-      
+     dir("MLBParks"){ 
        echo "Building version ${devTag}"
        sh "mvn -s ../nexus_settings.xml clean package -DskipTests=true"
        echo "Building complete version ${devTag}"
-     
+     }
    }
   }
 }
