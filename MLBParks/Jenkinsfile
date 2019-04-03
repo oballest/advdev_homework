@@ -74,7 +74,7 @@ podTemplate(
   stage('Publish to Nexus') {
     echo "Publish to Nexus"	  
     dir("MLBParks"){
-      sh "mvn -s ../nexus_settings.xml -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
+      sh "mvn -s ../nexus_settings.xml deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
     }
   }
   //End of the publish stage
