@@ -3,6 +3,7 @@
 def devTag      = "0.0-0"
 // Set the tag for the production image: version
 def prodTag     = "0.0"
+def artifact	= ""
 podTemplate(
   label: "skopeo-pod",
   cloud: "openshift",
@@ -41,6 +42,7 @@ podTemplate(
              // TBD: Set the tag for the production image: version
              // Example: def prodTag = "0.0"
              prodTag = "${version}"
+	     artifact = getArtifactIdFromPom(pom)
 	  }
 	  echo "Devtag: ${devTag}"       	
     }
@@ -79,9 +81,7 @@ podTemplate(
   }
   //End of the publish stage
   stage('Build and Tag OpenShift Image') {
-     echo "Building OpenShift container image tasks:${devTag}"
-     def pom = 'pom.xml'
-     def artifact = getArtifactIdFromPom(pom)
+     echo "Building OpenShift container image ${artifact}:${devTag}"
      openshift.withCluster() {
       openshift.withProject("${GUID}-parks-dev") {
         openshift.selector("bc", "mlbparks").startBuild("--from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/${artifact}/${prodTag}/${artifact}-${prodTag}.war", "--wait=true")
