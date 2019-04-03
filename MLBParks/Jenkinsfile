@@ -71,6 +71,24 @@ podTemplate(
    }        
   }
   //End of the test stage
+  stage('Publish to Nexus') {
+    echo "Publish to Nexus"	  
+    dir("MLBParks"){
+      sh "mvn -s ../nexus_settings.xml -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
+    }
+  }
+  //End of the publish stage
+  stage('Build and Tag OpenShift Image') {
+     echo "Building OpenShift container image tasks:${devTag}"
+     def pom = 'pom.xml'
+     def artifact = getArtifactIdFromPom(pom)
+     openshift.withCluster() {
+      openshift.withProject("${GUID}-parks-dev") {
+        openshift.selector("bc", "mlbparks").startBuild("--from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/${artifact}/${prodTag}/${artifact}-${prodTag}.war", "--wait=true")
+        openshift.tag("${artifact}:latest", "${artifact}:${devTag}")
+      }
+    }
+  }
  }
 }
 
