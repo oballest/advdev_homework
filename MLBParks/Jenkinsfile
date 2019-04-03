@@ -113,6 +113,40 @@ podTemplate(
      }
     }
   }
+  //End of the deploy stage
+  stage('Integration Tests') {
+    echo "Running Integration Tests"
+    echo "Requesting mlbparks service state"
+    def devResponse = sh(returnStdout: true, script: "curl mlbparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/healthz/").trim()
+    echo "Dev MLB Parks Response: " + devResponse
+    if (devResponse.contains("OK")) {
+     echo "*** MLB Parks (Dev) validated successfully."
+    }
+    else {
+     error("MLBParks (Dev) returned unexpected response.")
+    }
+    echo "Requesting mlbparks service status"
+    devResponse = sh(returnStdout: true, script: "curl mlbparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/info/").trim()
+    echo "Dev MLB Parks Response 2: " + devResponse
+    if (devResponse.contains('{"id":"mlbparks","displayName":"MLB Parks (Dev)","center":{"latitude":"39.82","longitude":"-98.57"},"zoom":5}')) {
+     echo "*** MLB Parks (Dev) 2 validated successfully."
+    }
+    else {
+     error("MLBParks (Dev) 2 returned unexpected response.")
+    }   
+  }
+  // End of the Integration test stage
+  stage('Copy Image to Nexus Docker Registry') {
+    echo "Copy image to Nexus Docker Registry"
+    sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin123 docker://docker-registry.default.svc.cluster.local:5000/${GUID}-parks-dev/${artifact}:${devTag} docker://nexus3.${GUID}-nexus.svc.cluster.local:5000/${artifact}:${devTag}"
+    
+    openshift.withCluster() {
+     openshift.withProject("${GUID}-parks-prod") {
+	openshift.tag("${GUID}-parks-dev/${artifact}:${devTag}", "${GUID}-parks-dev/${artifact}:${prodTag}")
+     }
+    }
+  }
+  //End ot the nexus image publish stage
  }
 }
 
