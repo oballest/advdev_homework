@@ -138,7 +138,7 @@ podTemplate(
   // End of the Integration test stage
   stage('Copy Image to Nexus Docker Registry') {
     echo "Copy image to Nexus Docker Registry"
-    sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin123 docker://docker-registry.default.svc.cluster.local:5000/${GUID}-parks-dev/${artifact}:${devTag} docker://nexus3.${GUID}-nexus.svc.cluster.local:5000/${artifact}:${devTag}"
+    sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin123 docker://docker-registry.default.svc.cluster.local:5000/${GUID}-parks-dev/${artifact}:${devTag} docker://nexus3-registry.${GUID}-nexus.svc.cluster.local:5000/${artifact}:${devTag}"
     
     openshift.withCluster() {
      openshift.withProject("${GUID}-parks-prod") {
