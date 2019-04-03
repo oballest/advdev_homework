@@ -94,7 +94,7 @@ podTemplate(
     echo "Deploy container image to Development Project"
     openshift.withCluster() {
      openshift.withProject("${GUID}-parks-dev") {
-       openshift.set("image", "dc/mlbparks", "mlbparks=docker-registry.default.svc:5000/${devProject}/${artifact}:${devTag}")
+       openshift.set("image", "dc/mlbparks", "mlbparks=docker-registry.default.svc:5000/${GUID}-parks-dev/${artifact}:${devTag}")
 
        // Deploy the application.
        openshift.selector("dc", "mlbparks").rollout().latest();
