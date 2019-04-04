@@ -44,7 +44,7 @@ podTemplate(
     stage('Build App') {
      dir("ParksMap"){ 
        echo "Building version ${devTag}"
-       sh "mvn -s ../nexus_settings.xml clean package -DskipTests=true"
+       sh "mvn -s ../nexus_settings.xml clean package spring-boot:repackage -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
        echo "Building complete version ${devTag}"
      }
     }
