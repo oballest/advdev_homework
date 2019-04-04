@@ -83,6 +83,42 @@ podTemplate(
       }
      }
     }
+    //End of the tag image stage
+    stage('Deploy to Dev') {
+      echo "Deploy container image to Development Project"
+      openshift.withCluster() {
+       openshift.withProject("${GUID}-parks-dev") {
+         openshift.set("image", "dc/parksmap", "parksmap=docker-registry.default.svc:5000/${GUID}-parks-dev/${artifact}:${devTag}")
+
+         // Deploy the application.
+         openshift.selector("dc", "parksmap").rollout().latest();
+
+         // Wait for application to be deployed
+         def dc = openshift.selector("dc", "parksmap").object()
+         def dc_version = dc.status.latestVersion
+         def rc = openshift.selector("rc", "parksmap-${dc_version}").object()	
+
+         echo "Waiting for ReplicationController parksmap-${dc_version} to be ready"
+         while (rc.spec.replicas != rc.status.readyReplicas) {
+           sleep 5
+           rc = openshift.selector("rc", "parksmap-${dc_version}").object()
+         }
+         echo "ReplicationController parksmap-${dc_version} ready"
+       }
+      }
+    }
+    //End of the deploy stage
+    stage('Copy Image to Nexus Docker Registry') {
+      echo "Copy image to Nexus Docker Registry"
+      sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin123 docker://docker-registry.default.svc.cluster.local:5000/${GUID}-parks-dev/${artifact}:${devTag} docker://nexus3-registry.${GUID}-nexus.svc.cluster.local:5000/${artifact}:${devTag}"
+    
+      openshift.withCluster() {
+       openshift.withProject("${GUID}-parks-prod") {
+	  openshift.tag("${GUID}-parks-dev/${artifact}:${devTag}", "${GUID}-parks-dev/${artifact}:${prodTag}")
+       }
+      }
+    }
+    //End ot the nexus image publish stage
   }
 }
 
