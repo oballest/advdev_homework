@@ -78,9 +78,33 @@ podTemplate(
      echo "Building OpenShift container image ${artifact}:${devTag}"
      openshift.withCluster() {
       openshift.withProject("${GUID}-parks-dev") {
-        openshift.selector("bc", "mlbparks").startBuild("--from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/${artifact}/${prodTag}/${artifact}-${prodTag}.war", "--wait=true")
+        openshift.selector("bc", "nationalparks").startBuild("--from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/${artifact}/${prodTag}/${artifact}-${prodTag}.jar", "--wait=true")
         openshift.tag("${artifact}:latest", "${artifact}:${devTag}")
       }
+    }
+  }
+  //End of the tag image stage
+  stage('Deploy to Dev') {
+    echo "Deploy container image to Development Project"
+    openshift.withCluster() {
+     openshift.withProject("${GUID}-parks-dev") {
+       openshift.set("image", "dc/nationalparks", "nationalparks=docker-registry.default.svc:5000/${GUID}-parks-dev/${artifact}:${devTag}")
+
+       // Deploy the application.
+       openshift.selector("dc", "nationalparks").rollout().latest();
+
+       // Wait for application to be deployed
+       def dc = openshift.selector("dc", "nationalparks").object()
+       def dc_version = dc.status.latestVersion
+       def rc = openshift.selector("rc", "nationalparks-${dc_version}").object()	
+
+       echo "Waiting for ReplicationController nationalparks-${dc_version} to be ready"
+       while (rc.spec.replicas != rc.status.readyReplicas) {
+          sleep 5
+          rc = openshift.selector("rc", "nationalparks-${dc_version}").object()
+       }
+       echo "ReplicationController nationalparks-${dc_version} ready"
+     }
     }
   }
  }
