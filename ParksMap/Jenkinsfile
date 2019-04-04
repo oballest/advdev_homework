@@ -50,7 +50,7 @@ podTemplate(
     }
     //End of the build step
     stage('Test App') {
-     dir("Nationalparks"){ 
+     dir("ParksMap"){ 
       parallel(
        'Unit Tests': {
          stage('Unit Tests') {         
@@ -69,7 +69,7 @@ podTemplate(
     //End of the test stage
     stage('Publish to Nexus') {
       echo "Publish to Nexus"	  
-      dir("Nationalparks"){
+      dir("ParksMap"){
         sh "mvn -s ../nexus_settings.xml deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
       }
     }
