@@ -14,7 +14,7 @@ echo "Setting up Parks Development Environment in project ${GUID}-parks-dev"
 # To be Implemented by Student
 oc policy add-role-to-user edit system:serviceaccount:${GUID}-jenkins:jenkins -n ${GUID}-parks-dev
 echo "Setting up MongoDb in project ${GUID}-parks-dev"
-oc new-app mongodb-persistent --param MONGODB_USER=mongodb --param MONGODB_PASSWORD=mongodb --param MONGODB_DATABASE=parks
+oc new-app mongodb-persistent --param MONGODB_USER=mongodb --param MONGODB_PASSWORD=mongodb --param MONGODB_DATABASE=parks n ${GUID}-parks-dev
 echo "Setting up build config for mlbparks"
 oc new-build --binary=true --name="mlbparks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 echo "Setting config maps for mlbparks"
