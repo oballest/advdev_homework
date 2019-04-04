@@ -25,7 +25,8 @@ oc set triggers dc/mlbparks --remove-all -n ${GUID}-parks-dev
 oc set probe dc/mlbparks -n ${GUID}-parks-dev --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/mlbparks -n ${GUID}-parks-dev --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/mlbparks --from configmap/mlbparks-config -n ${GUID}-parks-dev
-oc set deployment-hook  dc/mlbparks --post -n ${GUID}-parks-dev -- curl -v '$(hostname)':8080/ws/data/load/
+oc set env dc/mlbparks DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb DB_PASSWORD=mongodb DB_NAME=parks
+oc set deployment-hook  dc/mlbparks --post -n ${GUID}-parks-dev -- curl -v localhost:8080/ws/data/load/
 echo "Exposing service mlbparks"
 oc expose dc mlbparks --port=8080 --labels=type=parksmap-backend -n ${GUID}-parks-dev
 
@@ -39,6 +40,7 @@ oc set triggers dc/nationalparks --remove-all -n ${GUID}-parks-dev
 oc set probe dc/nationalparks -n ${GUID}-parks-dev --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/nationalparks -n ${GUID}-parks-dev --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/nationalparks --from configmap/nationalparks-config -n ${GUID}-parks-dev
-oc set deployment-hook dc/nationalparks --post -n ${GUID}-parks-dev -- curl -v '$(hostname)':8080/ws/data/load/
+oc set env dc/nationalparks DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb DB_PASSWORD=mongodb DB_NAME=parks
+oc set deployment-hook dc/nationalparks --post -n ${GUID}-parks-dev -- curl -v localhost:8080/ws/data/load/
 echo "Exposing service nationalparks"
 oc expose dc nationalparks --port=8080 --labels=type=parksmap-backend -n ${GUID}-parks-dev
