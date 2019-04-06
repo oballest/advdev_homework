@@ -18,13 +18,7 @@ podTemplate(
   ]
 ) {
   node('skopeo-pod') {
-    
-
-    // Your Pipeline Code goes here. Make sure to use the ${GUID} and ${CLUSTER} parameters where appropriate
-    // You need to build the application in directory `MLBParks`.
-    // Also copy "../nexus_settings.xml" to your build directory
-    // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
-    // Checkout Source Code
+   
     stage('Creating service') {
      echo "Creating service"
      
