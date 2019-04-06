@@ -18,8 +18,7 @@ podTemplate(
   ]
 ) {
   node('skopeo-pod') {
-    echo "GUID: ${GUID}"
-    echo "CLUSTER: ${CLUSTER}"
+    
 
     // Your Pipeline Code goes here. Make sure to use the ${GUID} and ${CLUSTER} parameters where appropriate
     // You need to build the application in directory `MLBParks`.
