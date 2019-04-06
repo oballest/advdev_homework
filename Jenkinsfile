@@ -31,7 +31,7 @@ podTemplate(
 	 def svc = openshift.selector("dc/${destApp}")
 	 echo "servicio seleccionado ${svc}"
          if(svc != null){
-	   activeApp = svc.object().spec.to.name
+	   activeApp = svc.object().spec.selector.app
            destApp = "mlbparks-green"
 	 } 
 	 echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
