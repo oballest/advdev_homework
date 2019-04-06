@@ -31,7 +31,7 @@ podTemplate(
          try{
 	     def svc = openshift.selector("svc/${destApp}").object()
 	     echo "servicio seleccionado ${svc}"
-	     activeApp = svc.object().spec.selector.app
+	     activeApp = svc.spec.selector.app
 	     destApp = "mlbparks-green"
          } catch ( e ) {
 	    echo "servicio No Encontrado, se utiliza configuración inicial"
