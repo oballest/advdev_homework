@@ -4,6 +4,8 @@ def devTag      = "0.0-0"
 // Set the tag for the production image: version
 def prodTag     = "1.0"
 def artifact	= "mlbparks"
+def destApp = "mlbparks-blue" 
+def activeApp = "mlbparks-green"
 podTemplate(
   label: "skopeo-pod",
   cloud: "openshift",
@@ -22,8 +24,6 @@ podTemplate(
     stage('Creating service') {
      echo "Creating service"
      
-     def destApp = "mlbparks-blue" 
-     def activeApp = ""
      echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
     
      openshift.withCluster() {
@@ -60,6 +60,20 @@ podTemplate(
       }
      }
     }
+ //End ot the Blue/Green Production Deployment
+  stage('Switch over to new Version') {
+    echo "Executing production switch"
+    openshift.withCluster() {
+      openshift.withProject("5359-parks-prod") {
+        //Actual service deletion
+	openshift.selector("svc", ${activeApp}).delete()
+
+	//Actual Deployment config
+	def dc = openshift.selector("dc", ${destApp})
+	dc.expose("--port=8080", "--labels=type=parksmap-backend", "-n 5359-parks-prod")
+      }
+    }
+  }
   }
 }
 
