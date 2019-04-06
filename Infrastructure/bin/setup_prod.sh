@@ -25,7 +25,7 @@ echo "Setting config maps for mlbparks Green"
 oc create configmap mlbparks-green-config --from-literal="APPNAME=MLB Parks (Green)" -n ${GUID}-parks-prod
 
 echo "Setting up deployment config mlbparks Green"
-oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/mlbparks-green --remove-all -n ${GUID}-parks-prod
 oc set probe dc/mlbparks-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/mlbparks-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
@@ -39,11 +39,42 @@ oc expose dc mlbparks-green --port=8080 --labels=type=parksmap-backend -n ${GUID
 echo "Setting config maps for mlbparks Blue"
 oc create configmap mlbparks-blue-config --from-literal="APPNAME=MLB Parks (Blue)" -n ${GUID}-parks-prod
 
-echo "Setting up deployment config mlbparks Green"
-oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+echo "Setting up deployment config mlbparks Blue"
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all -n ${GUID}-parks-prod
 oc set probe dc/mlbparks-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/mlbparks-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/mlbparks-blue --from configmap/mlbparks-blue-config -n ${GUID}-parks-prod
 oc set env dc/mlbparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/mlbparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c mlbparks-blue -- curl -v mlbparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
+
+echo "Setting config maps for nationalparks Green"
+oc create configmap nationalparks-green-config --from-literal="APPNAME=National Parks (Green)" -n ${GUID}-parks-prod
+
+echo "Setting up deployment config nationalparks Green"
+oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc set triggers dc/nationalparks-green --remove-all -n ${GUID}-parks-prod
+oc set probe dc/nationalparks-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
+oc set probe dc/nationalparks-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
+oc set env dc/nationalparks-green --from configmap/nationalparks-green-config -n ${GUID}-parks-prod
+oc set env dc/nationalparks-green DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
+oc set deployment-hook dc/nationalparks-green --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-green -- curl -v nationalparks-green.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
+
+echo "Exposing service nationalparks Green"
+oc expose dc nationalparks-green --port=8080 --labels=type=parksmap-backend -n ${GUID}-parks-prod
+
+echo "Setting config maps for nationalparks Blue"
+oc create configmap nationalparks-blue-config --from-literal="APPNAME=National Parks (Blue)" -n ${GUID}-parks-prod
+
+echo "Setting up deployment config nationalparks Blue"
+oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc set triggers dc/nationalparks-blue --remove-all -n ${GUID}-parks-prod
+oc set probe dc/nationalparks-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
+oc set probe dc/nationalparks-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
+oc set env dc/nationalparks-blue --from configmap/nationalparks-blue-config -n ${GUID}-parks-prod
+oc set env dc/nationalparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
+oc set deployment-hook dc/nationalparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-blue -- curl -v nationalparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
+
+
+
+

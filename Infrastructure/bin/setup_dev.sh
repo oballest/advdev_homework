@@ -39,7 +39,7 @@ oc new-build --binary=true --name="nationalparks" redhat-openjdk18-openshift:1.2
 echo "Setting config maps for nationalparks"
 oc create configmap nationalparks-config --from-literal="APPNAME=National Parks (Dev)" -n ${GUID}-parks-dev
 
-echo "Setting up deployment config mlbparks"
+echo "Setting up deployment config nationalparks"
 oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 oc set triggers dc/nationalparks --remove-all -n ${GUID}-parks-dev
 oc set probe dc/nationalparks -n ${GUID}-parks-dev --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
