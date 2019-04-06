@@ -22,11 +22,19 @@ podTemplate(
     stage('Creating service') {
      echo "Creating service"
      
+     def destApp = "mlbparks-blue" 
+     def activeApp = ""
+
     
      openshift.withCluster() {
       openshift.withProject("5359-parks-prod") {
-	 def dc = openshift.selector("dc", "mlbparks-blue")
-	 dc.expose("--port=8080", "--labels=type=parksmap-backend", "-n 5359-parks-prod")
+	 def svc = openshift.selector("dc/${destApp}")
+	 echo "servicio seleccionado ${svc}"
+         if(svc != null){
+	   activeApp = svc.object().spec.to.name
+           destApp = "mlbparks-green"
+	 } 
+	 echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
       }
      }
     }
