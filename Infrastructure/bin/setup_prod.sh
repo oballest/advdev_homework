@@ -75,6 +75,35 @@ oc set env dc/nationalparks-blue --from configmap/nationalparks-blue-config -n $
 oc set env dc/nationalparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/nationalparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-blue -- curl -v nationalparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
 
+echo "Setting config maps for Parksmap Green"
+oc create configmap parksmap-green-config --from-literal="APPNAME=ParksMap (Green)" -n ${GUID}-parks-prod
+
+echo "Setting up deployment config Parksmap Green"
+oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc set triggers  dc/parksmap-green --remove-all -n ${GUID}-parks-prod
+oc set probe dc/parksmap-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
+oc set probe dc/parksmap-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
+oc set env dc/parksmap-green --from configmap/parksmap-green-config -n ${GUID}-parks-prod
+
+echo "Exposing service parksmap Green"
+oc expose dc parksmap-green --port=8080 -n ${GUID}-parks-prod
+
+echo "Exposing parksmap service Green"
+oc expose service parksmap-green
+
+echo "Setting config maps for Parksmap Blue"
+oc create configmap parksmap-blue-config --from-literal="APPNAME=ParksMap (Blue)" -n ${GUID}-parks-prod
+
+echo "Setting up deployment config Parksmap Blue"
+oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc set triggers  dc/parksmap-blue --remove-all -n ${GUID}-parks-prod
+oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
+oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
+oc set env dc/parksmap-blue --from configmap/parksmap-blue-config -n ${GUID}-parks-prod
+
+echo "Exposing service parksmap Green"
+oc expose service parksmap-green --name parksmap -n ${GUID}-parks-prod
+
 
 
 
