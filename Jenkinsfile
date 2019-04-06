@@ -24,6 +24,8 @@ podTemplate(
      
      def destApp = "mlbparks-blue" 
      def activeApp = ""
+     def artifact = "mlbparks"
+     def artifact = "1.0"
      echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
     
      openshift.withCluster() {
@@ -37,6 +39,26 @@ podTemplate(
 	    echo "servicio No Encontrado, se utiliza configuración inicial"
          }
 	 echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
+	 echo "Active Application:      " + activeApp
+         echo "Destination Application: " + destApp
+         
+         // Update the Image on the Production Deployment Config
+         def dc = openshift.selector("dc/${destApp}").object()
+         dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/5359-parks-dev/${artifact}:${prodTag}"
+         openshift.apply(dc)
+         
+         // Deploy the inactive application.
+         openshift.selector("dc", "${destApp}").rollout().latest();
+      
+         // Wait for application to be deployed
+         def dc_prod = openshift.selector("dc", "${destApp}").object()
+         def dc_version = dc_prod.status.latestVersion
+         def rc_prod = openshift.selector("rc", "${destApp}-${dc_version}").object()
+         echo "Waiting for ${destApp} to be ready"
+         while (rc_prod.spec.replicas != rc_prod.status.readyReplicas) {
+            sleep 5
+            rc_prod = openshift.selector("rc", "${destApp}-${dc_version}").object()
+         }
       }
      }
     }
