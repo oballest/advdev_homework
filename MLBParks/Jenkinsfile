@@ -166,7 +166,7 @@ podTemplate(
          
          // Update the Image on the Production Deployment Config
          def dc = openshift.selector("dc/${destApp}").object()
-         dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/${artifact}:${prodTag}"
+         dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${GUID}-parks-dev/${artifact}:${prodTag}"
          openshift.apply(dc)
          
          // Deploy the inactive application.
