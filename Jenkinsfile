@@ -66,7 +66,7 @@ podTemplate(
     openshift.withCluster() {
       openshift.withProject("5359-parks-prod") {
         //Actual service deletion
-	openshift.selector("svc", ${activeApp}).delete()
+	openshift.selector("svc", "${activeApp}").delete()
 
 	//Actual Deployment config
 	def dc = openshift.selector("dc", ${destApp})
