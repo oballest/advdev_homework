@@ -2,8 +2,8 @@
 // Set the tag for the development image: version + build number
 def devTag      = "0.0-0"
 // Set the tag for the production image: version
-def prodTag     = "0.0"
-def artifact	= ""
+def prodTag     = "1.0"
+def artifact	= "mlbparks"
 podTemplate(
   label: "skopeo-pod",
   cloud: "openshift",
@@ -24,8 +24,6 @@ podTemplate(
      
      def destApp = "mlbparks-blue" 
      def activeApp = ""
-     def artifact = "mlbparks"
-     def artifact = "1.0"
      echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
     
      openshift.withCluster() {
