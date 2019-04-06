@@ -69,7 +69,7 @@ podTemplate(
 	openshift.selector("svc", "${activeApp}").delete()
 
 	//Actual Deployment config
-	def dc = openshift.selector("dc", ${destApp})
+	def dc = openshift.selector("dc", "${destApp}")
 	dc.expose("--port=8080", "--labels=type=parksmap-backend", "-n 5359-parks-prod")
       }
     }
