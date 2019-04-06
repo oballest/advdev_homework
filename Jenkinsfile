@@ -24,7 +24,7 @@ podTemplate(
      
      def destApp = "mlbparks-blue" 
      def activeApp = ""
-
+     echo "Aplicacion actual ${activeApp} aplicacion de destino ${destApp}"
     
      openshift.withCluster() {
       openshift.withProject("5359-parks-prod") {
