@@ -28,7 +28,7 @@ podTemplate(
     
      openshift.withCluster() {
       openshift.withProject("5359-parks-prod") {
-	 def svc = openshift.selector("dc/${destApp}")
+	 def svc = openshift.selector("svc/${destApp}")
 	 echo "servicio seleccionado ${svc}"
          if(svc != null){
 	   activeApp = svc.object().spec.selector.app
