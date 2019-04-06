@@ -101,8 +101,8 @@ oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --liveness --failure-thresho
 oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/parksmap-blue --from configmap/parksmap-blue-config -n ${GUID}-parks-prod
 
-echo "Exposing service parksmap Green"
-oc expose service parksmap-green --name parksmap -n ${GUID}-parks-prod
+echo "Exposing service parksmap Blue"
+oc expose dc parksmap-blue --port=8080 -n ${GUID}-parks-prod
 
 
 
