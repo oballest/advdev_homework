@@ -66,4 +66,4 @@ echo "Exposing service parksmap"
 oc expose dc parksmap --port=8080 -n ${GUID}-parks-dev
 
 echo "Exposing parksmap service"
-oc expose service parksmap
+oc expose service parksmap -n ${GUID}-parks-dev
