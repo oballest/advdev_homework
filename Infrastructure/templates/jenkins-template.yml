@@ -166,7 +166,11 @@ objects:
             timeoutSeconds: 240
           resources:
             limits:
+              cpu: "2"
               memory: 2Gi
+            requests:
+              cpu: "3"
+              memory: 4Gi
           securityContext:
             capabilities: {}
             privileged: false
