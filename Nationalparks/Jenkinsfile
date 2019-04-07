@@ -17,7 +17,7 @@ podTemplate(
       resourceRequestMemory: "1Gi",
       resourceLimitMemory: "2Gi",
       resourceRequestCpu: "750Mi",
-      resourceLimitCpu: "750Mi"
+      resourceLimitCpu: "0.5"
     )
   ]
 ) {
