@@ -13,6 +13,8 @@ echo "Setting up Parks Production Environment in project ${GUID}-parks-prod"
 # The Green services/routes need to be active initially to guarantee a successful grading pipeline run.
 
 # To be Implemented by Student
+
+#Setting up permissions
 echo "Setting up the right permissions to the jenkis sevice account"
 oc policy add-role-to-user edit system:serviceaccount:${GUID}-jenkins:jenkins -n ${GUID}-parks-prod
 oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
@@ -20,6 +22,18 @@ oc policy add-role-to-group  system:image-puller system:serviceaccounts:${GUID}-
 
 echo "Setting up the replicated MongoDb in project ${GUID}-parks-prod"
 oc new-app -f Infrastructure/templates/mongodc-rs-template.yml -n ${GUID}-parks-prod --param MONGODB_USER=mongodb_user --param MONGODB_PASSWORD=redhat_01 --param MONGODB_DATABASE=parks --param MONGODB_REPLICA_NAME=rs0 --param MONGODB_SERVICE_NAME=mongodb
+
+#validating the image stream mlbparks from the development project
+while : ; do
+   echo "Checking if the imagestream mlbparks exist"
+   oc get is mlbparks -n ${GUID}-parks-dev
+   if [ "$?" == "0" ]
+   then
+    break
+   fi
+   echo "...no. Sleeping 10 seconds."
+   sleep 10
+done
 
 echo "Setting config maps for mlbparks Green"
 oc create configmap mlbparks-green-config --from-literal="APPNAME=MLB Parks (Green)" -n ${GUID}-parks-prod
@@ -48,6 +62,18 @@ oc set env dc/mlbparks-blue --from configmap/mlbparks-blue-config -n ${GUID}-par
 oc set env dc/mlbparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/mlbparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c mlbparks-blue -- curl -v mlbparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
 
+#validating the image stream nationalparks from the development project
+while : ; do
+   echo "Checking if the imagestream nationalparks exist"
+   oc get is nationalparks -n ${GUID}-parks-dev
+   if [ "$?" == "0" ]
+   then
+    break
+   fi
+   echo "...no. Sleeping 10 seconds."
+   sleep 10
+done
+
 echo "Setting config maps for nationalparks Green"
 oc create configmap nationalparks-green-config --from-literal="APPNAME=National Parks (Green)" -n ${GUID}-parks-prod
 
@@ -74,6 +100,18 @@ oc set probe dc/nationalparks-blue -n ${GUID}-parks-prod --readiness --failure-t
 oc set env dc/nationalparks-blue --from configmap/nationalparks-blue-config -n ${GUID}-parks-prod
 oc set env dc/nationalparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/nationalparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-blue -- curl -v nationalparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
+
+#validating the image stream parksmap from the development project
+while : ; do
+   echo "Checking if the imagestream parksmap exist"
+   oc get is parksmap -n ${GUID}-parks-dev
+   if [ "$?" == "0" ]
+   then
+    break
+   fi
+   echo "...no. Sleeping 10 seconds."
+   sleep 10
+done
 
 echo "Setting config maps for Parksmap Green"
 oc create configmap parksmap-green-config --from-literal="APPNAME=ParksMap (Green)" -n ${GUID}-parks-prod
@@ -102,7 +140,7 @@ oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --readiness --failure-thresh
 oc set env dc/parksmap-blue --from configmap/parksmap-blue-config -n ${GUID}-parks-prod
 
 echo "Exposing service parksmap Blue"
-oc expose dc parksmap-blue --port=8080 -n ${GUID}-parks-prod
+oc expose dc parksmap --port=8080 -n ${GUID}-parks-prod
 
 
 
