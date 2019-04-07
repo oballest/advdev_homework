@@ -127,7 +127,7 @@ echo "Exposing service parksmap Green"
 oc expose dc parksmap-green --port=8080 -n ${GUID}-parks-prod
 
 echo "Exposing parksmap service Green"
-oc expose service parksmap-green
+oc expose service parksmap-green -n ${GUID}-parks-prod
 
 echo "Setting config maps for Parksmap Blue"
 oc create configmap parksmap-blue-config --from-literal="APPNAME=ParksMap (Blue)" -n ${GUID}-parks-prod
