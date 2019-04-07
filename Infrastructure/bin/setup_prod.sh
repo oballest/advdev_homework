@@ -140,7 +140,7 @@ oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --readiness --failure-thresh
 oc set env dc/parksmap-blue --from configmap/parksmap-blue-config -n ${GUID}-parks-prod
 
 echo "Exposing service parksmap Blue"
-oc expose dc parksmap --port=8080 -n ${GUID}-parks-prod
+oc expose dc parksmap-blue --port=8080 -n ${GUID}-parks-prod
 
 
 
