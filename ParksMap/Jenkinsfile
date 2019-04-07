@@ -16,8 +16,8 @@ podTemplate(
       image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-slave-appdev",
       resourceRequestMemory: "1Gi",
       resourceLimitMemory: "2Gi",
-      resourceRequestCpu: "2",
-      resourceLimitCpu: "2"
+      resourceRequestCpu: "1",
+      resourceLimitCpu: "1"
     )
   ]
 ) {
