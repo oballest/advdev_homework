@@ -14,5 +14,4 @@ echo "Setting up Sonarqube in project $GUID-sonarqube"
 # oc new-app -f ../templates/sonarqube.yaml --param .....
 
 # To be Implemented by Student
-oc project ${GUID}-sonarqube
-oc new-app --file=Infrastructure/templates/sonarqube-template.yml --param SONAR_DB_USER=sonar --param SONAR_DB_PASSWORD=sonar --param SONAR_DB_NAME=sonar
+oc new-app --file=Infrastructure/templates/sonarqube-template.yml --param SONAR_DB_USER=sonar --param SONAR_DB_PASSWORD=sonar --param SONAR_DB_NAME=sonar -n ${GUID}-sonarqube
