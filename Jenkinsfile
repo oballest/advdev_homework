@@ -20,10 +20,11 @@ podTemplate(
   ]
 ) {
   node('skopeo-pod') {
-    environment {
-       field = "${activeApp}"
-    }
     stage('Creating service') {
+     environment {
+       field = "${activeApp}"
+     }
+     sh "printenv | sort"
      echo "Creating service ${field}"
      
     
