@@ -30,4 +30,13 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 
 echo "Setting up Jenkins resources y building the agent"
 oc new-app --file=Infrastructure/templates/jenkins-template.yml --param GUID=${GUID} --param CLUSTER=${CLUSTER} --param REPO=${REPO} -n ${GUID}-jenkins
+
+while : ; do
+   echo "Checking if Jenkins is Ready..."
+   oc get pod -n ${GUID}-jenkins|grep '\-1\-'|grep -v deploy|grep -v build|grep "1/1"
+   [[ "$?" == "1" ]] || break
+   echo "...no. Sleeping 10 seconds."
+   sleep 10
+done
+
 echo "Done setting up Jenkins pod y building the agent"
