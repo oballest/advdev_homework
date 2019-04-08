@@ -290,7 +290,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: sonarqube:6.7.4
-          namespace: 5359-sonarqube
       type: ImageChange
 - apiVersion: v1
   kind: Service
