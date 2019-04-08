@@ -48,7 +48,7 @@ podTemplate(
    stage('Build App') {
      dir("Nationalparks"){ 
        echo "Building version ${devTag}"
-       sh "mvn -s ../nexus_settings.xml clean package -DskipTests=true"
+       sh "mvn -s ../nexus_settings.xml clean package -DskipTests=true -DGUID=${GUID}"
        echo "Building complete version ${devTag}"
      }
    }
@@ -59,13 +59,13 @@ podTemplate(
       'Unit Tests': {
       stage('Unit Tests') {         
 	echo "Running Unit Tests"
-	sh "mvn -s ../nexus_settings.xml test"
+	sh "mvn -s ../nexus_settings.xml test -DGUID=${GUID}"
        	step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true])
       }},
       'Code Coverage Tests': {
       stage('Code Coverage Tests'){
 	echo "Running Code Analysis"
-	sh "mvn -s ../nexus_settings.xml test sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"	
+	sh "mvn -s ../nexus_settings.xml test sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag} -DGUID=${GUID}"	
       }}
     )
    }        
@@ -74,7 +74,7 @@ podTemplate(
   stage('Publish to Nexus') {
     echo "Publish to Nexus"	  
     dir("Nationalparks"){
-      sh "mvn -s ../nexus_settings.xml deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
+      sh "mvn -s ../nexus_settings.xml deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases -DGUID=${GUID}"
     }
   }
   //End of the publish stage
