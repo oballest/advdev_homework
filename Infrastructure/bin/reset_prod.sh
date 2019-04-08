@@ -22,7 +22,7 @@ echo "finding out if the mlbparks-blue service exists"
 oc get svc mlbparks-blue -n ${GUID}-parks-prod
 if [ "$?" == "0" ]
 then
-  echo "mlbparks-blue does exist swiching over mlbparks-green "
+  echo "mlbparks-blue does exist switching over mlbparks-green "
   oc delete svc mlbparks-blue -n ${GUID}-parks-prod
   oc expose dc mlbparks-green --port=8080 -n ${GUID}-parks-prod
 fi
@@ -31,10 +31,10 @@ echo "finding out if the nationalparks-blue service exists"
 oc get svc nationalparks-blue -n ${GUID}-parks-prod
 if [ "$?" == "0" ]
 then
-  echo "mlbparks-blue does exist swiching over mlbparks-green "
+  echo "mlbparks-blue does exist switching over mlbparks-green "
   oc delete svc nationalparks-blue -n ${GUID}-parks-prod
   oc expose dc nationalparks-green --port=8080 -n ${GUID}-parks-prod
 fi
 
 echo "Pointing the parksmap route to the green service"
-oc patch route parksmap --patch='{ "spec": { "to": { "name": "parksmap-green" }}}'
+oc patch route parksmap --patch='{ "spec": { "to": { "name": "parksmap-green" }}}' -n ${GUID}-parks-prod
