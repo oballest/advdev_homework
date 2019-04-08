@@ -40,13 +40,13 @@ oc create configmap mlbparks-green-config --from-literal="APPNAME=MLB Parks (Gre
 
 echo "Setting up deployment config mlbparks Green"
 oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc patch dc mlbparks-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set triggers dc/mlbparks-green --remove-all -n ${GUID}-parks-prod
 oc set probe dc/mlbparks-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/mlbparks-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/mlbparks-green --from configmap/mlbparks-green-config -n ${GUID}-parks-prod
 oc set env dc/mlbparks-green DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/mlbparks-green --post -n ${GUID}-parks-prod --failure-policy=retry -c mlbparks-green -- curl -v mlbparks-green.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
-oc patch dc mlbparks-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 echo "Exposing service mlbparks Green"
 oc expose dc mlbparks-green --port=8080 --labels=type=parksmap-backend -n ${GUID}-parks-prod
@@ -56,13 +56,13 @@ oc create configmap mlbparks-blue-config --from-literal="APPNAME=MLB Parks (Blue
 
 echo "Setting up deployment config mlbparks Blue"
 oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc patch dc mlbparks-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all -n ${GUID}-parks-prod
 oc set probe dc/mlbparks-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/mlbparks-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/mlbparks-blue --from configmap/mlbparks-blue-config -n ${GUID}-parks-prod
 oc set env dc/mlbparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/mlbparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c mlbparks-blue -- curl -v mlbparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
-oc patch dc mlbparks-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 #validating the image stream nationalparks from the development project
 while : ; do
@@ -82,12 +82,12 @@ oc create configmap nationalparks-green-config --from-literal="APPNAME=National 
 echo "Setting up deployment config nationalparks Green"
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/nationalparks-green --remove-all -n ${GUID}-parks-prod
+oc patch dc nationalparks-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set probe dc/nationalparks-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/nationalparks-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/nationalparks-green --from configmap/nationalparks-green-config -n ${GUID}-parks-prod
 oc set env dc/nationalparks-green DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/nationalparks-green --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-green -- curl -v nationalparks-green.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
-oc patch dc nationalparks-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 echo "Exposing service nationalparks Green"
 oc expose dc nationalparks-green --port=8080 --labels=type=parksmap-backend -n ${GUID}-parks-prod
@@ -97,13 +97,13 @@ oc create configmap nationalparks-blue-config --from-literal="APPNAME=National P
 
 echo "Setting up deployment config nationalparks Blue"
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc patch dc nationalparks-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set triggers dc/nationalparks-blue --remove-all -n ${GUID}-parks-prod
 oc set probe dc/nationalparks-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/nationalparks-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/nationalparks-blue --from configmap/nationalparks-blue-config -n ${GUID}-parks-prod
 oc set env dc/nationalparks-blue DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=mongodb_user DB_PASSWORD=redhat_01 DB_NAME=parks DB_REPLICASET=rs0 -n ${GUID}-parks-prod
 oc set deployment-hook dc/nationalparks-blue --post -n ${GUID}-parks-prod --failure-policy=retry -c nationalparks-blue -- curl -v nationalparks-blue.${GUID}-parks-prod.svc.cluster.local:8080/ws/data/load/
-oc patch dc nationalparks-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 #validating the image stream parksmap from the development project
 while : ; do
@@ -122,11 +122,11 @@ oc create configmap parksmap-green-config --from-literal="APPNAME=ParksMap (Gree
 
 echo "Setting up deployment config Parksmap Green"
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc patch dc parksmap-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set triggers  dc/parksmap-green --remove-all -n ${GUID}-parks-prod
 oc set probe dc/parksmap-green -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/parksmap-green -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/parksmap-green --from configmap/parksmap-green-config -n ${GUID}-parks-prod
-oc patch dc parksmap-green --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 echo "Exposing service parksmap Green"
 oc expose dc parksmap-green --port=8080 -n ${GUID}-parks-prod
@@ -139,11 +139,11 @@ oc create configmap parksmap-blue-config --from-literal="APPNAME=ParksMap (Blue)
 
 echo "Setting up deployment config Parksmap Blue"
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc patch dc parksmap-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 oc set triggers  dc/parksmap-blue --remove-all -n ${GUID}-parks-prod
 oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --liveness --failure-threshold=3 --initial-delay-seconds=30 -- echo ok
 oc set probe dc/parksmap-blue -n ${GUID}-parks-prod --readiness --failure-threshold=3 --initial-delay-seconds=60 --get-url=http://:8080/ws/healthz/
 oc set env dc/parksmap-blue --from configmap/parksmap-blue-config -n ${GUID}-parks-prod
-oc patch dc parksmap-blue --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n ${GUID}-parks-prod
 
 echo "Exposing service parksmap Blue"
 oc expose dc parksmap-blue --port=8080 -n ${GUID}-parks-prod
