@@ -23,6 +23,6 @@ public class BackendController{
       String applicationName = System.getenv("APPNAME");
       if (applicationName == null) applicationName = "MLB Parks";
 
-        return new Backend("mlbparks", applicationName, new Coordinates("40.82", "-98.57"), 5);
+        return new Backend("mlbparks", applicationName, new Coordinates("39.82", "-98.57"), 5);
     }
 }
